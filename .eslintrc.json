@@ -9,6 +9,7 @@
       "version": "detect"
     }
   },
+  "ignorePatterns": ["*.config.js"],
   "extends": ["plugin:react/recommended"],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
