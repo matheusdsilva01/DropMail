@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      content: {
+        'copy': 'url("assets/copy-icon.svg")',
+      },
+    },
   },
   plugins: [],
 }
