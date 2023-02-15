@@ -1,25 +1,51 @@
 import { useLazyQuery } from "@apollo/client";
 import { GET_EMAILS } from "apollo/querys";
 import { useLocalStorage } from "hooks/useLocalStorage";
+import { useEffect } from "react";
+import { Mail } from "types/mail";
+import { sessionType } from "types/session";
+import Email from "./email";
 
 const Inbox = () => {
-  const [session, setSession] = useLocalStorage<any>("session", {});
+  const [session, setSession] = useLocalStorage<sessionType | undefined>(
+    "session",
+    undefined
+  );
+  const id = session?.id;
+  const [getEmails, { data: emails, loading, error }] = useLazyQuery<Mail>(
+    GET_EMAILS,
+    {
+      variables: { sessionid: id }
+    }
+  );
 
-  const id = session.id;
-  const [getEmails, { data, loading, error }] = useLazyQuery(GET_EMAILS, {
-    variables: { sessionid: id }
-  });
+  useEffect(() => {
+    (async () => {
+      const { data } = await getEmails();
+      if (session && data?.session) {
+        setSession(old => {
+          if (old) {
+            const newSession = { ...old, expiresAt: data.session.expiresAt };
+            return newSession;
+          }
+        });
+      }
+    })();
+  }, [emails]);
 
   return (
     <div className="w-full h-full rounded border-2 border-gray-300 flex">
       <section className="w-80">
         <ul>
           <li className="p-2 py-3 font-semibold">Inbox</li>
-          <li className="flex flex-col font-bold text-lg px-2 border-y border-gray-300">
-            <span className="text-black">Title</span>
-            <span className="text-lg text-blue-700">Subject</span>
-            <span className="text-gray-600 text-base">Content</span>
-          </li>
+          {emails?.session.mails.map(({ fromAddr, text, headerSubject }, i) => (
+            <Email
+              key={i}
+              text={text}
+              fromAddr={fromAddr}
+              headerSubject={headerSubject}
+            />
+          ))}
         </ul>
       </section>
       <section className="w-full px-2 bg-gray-200">

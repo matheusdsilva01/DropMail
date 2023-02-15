@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 import { sessionType } from "types/session";
 
 const HomeLayout = () => {
-  const [session, setSession] = useLocalStorage<sessionType | {}>(
+  const [session, setSession] = useLocalStorage<sessionType | undefined>(
     "session",
-    {}
+    undefined
   );
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [generateSession, { data: sessionreq, loading }] =
@@ -33,10 +33,14 @@ const HomeLayout = () => {
   };
 
   useEffect(() => {
-    if (JSON.stringify(session) === "{}") {
+    if (session && new Date(session.expiresAt) < new Date()) {
+      localStorage.removeItem("session");
       setModalIsOpen(true);
     }
-  }, []);
+    if (session === undefined) {
+      setModalIsOpen(true);
+    }
+  }, [session]);
 
   return (
     <>
