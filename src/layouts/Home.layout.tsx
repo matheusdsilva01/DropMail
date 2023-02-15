@@ -1,26 +1,46 @@
+import { useMutation } from "@apollo/client";
+import { GENERATE_SESSION } from "apollo/querys";
 import Header from "components/header";
 import Inbox from "components/Inbox";
 import Modal from "components/modal";
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { useEffect, useState } from "react";
+import { sessionType } from "types/session";
 
 const HomeLayout = () => {
-  const [session] = useLocalStorage("session", {});
+  const [session, setSession] = useLocalStorage<sessionType | {}>(
+    "session",
+    {}
+  );
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [generateSession, { data: sessionreq, loading }] =
+    useMutation(GENERATE_SESSION);
 
   const closeModal = () => {
-    setModalIsOpen(false);
+    generateEmail().then(() => setModalIsOpen(false));
+  };
+
+  const generateEmail = async () => {
+    const { data } = await generateSession();
+    let { id, expiresAt, addresses } = data.introduceSession;
+    let address = addresses[0].address;
+    let formattedSession = {
+      id,
+      expiresAt,
+      address
+    };
+    setSession(formattedSession);
   };
 
   useEffect(() => {
-    if (!session) {
+    if (JSON.stringify(session) === "{}") {
       setModalIsOpen(true);
     }
   }, []);
 
   return (
     <>
-      {modalIsOpen && <Modal onClick={closeModal} />}
+      {modalIsOpen && <Modal onClick={closeModal} loading={loading} />}
       <div>
         <Header />
         <div className="p-4">

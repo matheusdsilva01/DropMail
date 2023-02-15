@@ -1,53 +1,14 @@
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
+import { GET_EMAILS } from "apollo/querys";
 import { useLocalStorage } from "hooks/useLocalStorage";
-
-const GENERATE_SESSION = gql`
-  mutation {
-    introduceSession {
-      id
-      expiresAt
-      addresses {
-        address
-      }
-    }
-  }
-`;
-
-const GET_EMAILS = gql`
-  query Email($sessionid: ID!) {
-    session(id: $sessionid) {
-      mails {
-        rawSize
-        fromAddr
-        toAddr
-        downloadUrl
-        text
-        headerSubject
-      }
-    }
-  }
-`;
 
 const Inbox = () => {
   const [session, setSession] = useLocalStorage<any>("session", {});
-  const [generateSession, { data: emailreq }] = useMutation(GENERATE_SESSION);
+
   const id = session.id;
   const [getEmails, { data, loading, error }] = useLazyQuery(GET_EMAILS, {
     variables: { sessionid: id }
   });
-
-  const generateEmail = async () => {
-    generateSession().then(({ data }) => {
-      let { id, expiresAt, addresses } = data.introduceSession;
-      let address = addresses[0].address;
-      let formattedSession = {
-        id,
-        expiresAt,
-        address
-      };
-      setSession(formattedSession);
-    });
-  };
 
   return (
     <div className="w-full h-full rounded border-2 border-gray-300 flex">
