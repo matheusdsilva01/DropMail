@@ -31,7 +31,9 @@ const HomeLayout = () => {
     };
     setSession(formattedSession);
   };
-
+  const copyEmailToClipboard = () => {
+    session && navigator.clipboard.writeText(session.address);
+  };
   useEffect(() => {
     if (session && new Date(session.expiresAt) < new Date()) {
       localStorage.removeItem("session");
@@ -56,9 +58,12 @@ const HomeLayout = () => {
                   className="w-full rounded-l bg-white border border-gray-300 p-2"
                   type="text"
                   disabled
-                  value="email@email.com"
+                  value={session?.address}
                 />
-                <button className="flex border p-2 rounded-r border-gray-300 before:content-copy before:align-middle">
+                <button
+                  className="flex border p-2 rounded-r border-gray-300 before:content-copy before:align-middle"
+                  onClick={copyEmailToClipboard}
+                >
                   Copy
                 </button>
               </div>

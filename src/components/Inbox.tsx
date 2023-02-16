@@ -1,8 +1,8 @@
 import { useLazyQuery } from "@apollo/client";
 import { GET_EMAILS } from "apollo/querys";
 import { useLocalStorage } from "hooks/useLocalStorage";
-import { useEffect } from "react";
-import { Mail } from "types/mail";
+import { useEffect, useState } from "react";
+import { Mail, mailData } from "types/mail";
 import { sessionType } from "types/session";
 import Email from "./email";
 
@@ -11,13 +11,19 @@ const Inbox = () => {
     "session",
     undefined
   );
+  const [emailToRead, setEmailToRead] = useState<mailData>();
   const id = session?.id;
-  const [getEmails, { data: emails, loading, error }] = useLazyQuery<Mail>(
+  const [getEmails, { data: emails, refetch }] = useLazyQuery<Mail>(
     GET_EMAILS,
     {
-      variables: { sessionid: id }
+      variables: { sessionid: id },
+      pollInterval: 150000
     }
   );
+
+  const selectEmailToRead = (i: number) => {
+    setEmailToRead(emails?.session.mails[i]);
+  };
 
   useEffect(() => {
     (async () => {
@@ -44,26 +50,35 @@ const Inbox = () => {
               text={text}
               fromAddr={fromAddr}
               headerSubject={headerSubject}
+              selectEmail={() => selectEmailToRead(i)}
             />
           ))}
         </ul>
       </section>
       <section className="w-full px-2 bg-gray-200">
-        <h2 className="p-2 py-3 font-semibold border-b border-gray-300">
-          de: email@email.com
-        </h2>
-        <h1 className="px-2 py-3">Subject</h1>
-        <div className="bg-white p-2 whitespace-pre-line font-semibold">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industrys standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </div>
+        {emailToRead ? (
+          <>
+            <h2 className="p-2 py-3 font-semibold border-b border-gray-300">
+              {emailToRead.fromAddr}
+            </h2>
+            <h1 className="px-2 py-3">{emailToRead.headerSubject}</h1>
+            <div className="bg-white p-2 whitespace-pre-line font-semibold">
+              {emailToRead.text}
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="p-2 py-3 font-semibold border-b border-gray-300">
+              <div className="h-2.5 bg-gray-500 rounded-full animate-pulse w-48 mb-3.5"></div>
+            </h2>
+            <h1 className="px-2 py-3"></h1>
+            <div className="bg-white p-2 whitespace-pre-line font-semibold">
+              {emails && emails.session.mails.length < 1
+                ? "Você não tem emails no seu inbox"
+                : "Selecione um email a esquerda para ler"}
+            </div>
+          </>
+        )}
       </section>
     </div>
   );

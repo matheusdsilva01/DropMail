@@ -5,7 +5,7 @@ export type Mail = {
   };
 };
 
-type mailData = {
+export type mailData = {
   rawSize: number;
   fromAddr: string;
   toAddr: string;
