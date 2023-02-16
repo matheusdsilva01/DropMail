@@ -47,9 +47,9 @@ const HomeLayout = () => {
   return (
     <>
       {modalIsOpen && <Modal onClick={closeModal} loading={loading} />}
-      <div>
+      <div className="h-full">
         <Header />
-        <div className="p-4">
+        <div className="p-4 h-[70vh]">
           <section className="border border-gray-300 py-10 flex">
             <div className="my-0 mx-auto w-96">
               <span>Seu endereço de email temporario é</span>

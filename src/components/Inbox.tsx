@@ -41,28 +41,29 @@ const Inbox = () => {
 
   return (
     <div className="w-full h-full rounded border-2 border-gray-300 flex">
-      <section className="w-80">
+      <section className="w-80 overflow-auto">
         <ul>
-          <li className="p-2 py-3 font-semibold">Inbox</li>
+          <li className="p-2 py-3 font-bold">Inbox</li>
           {emails?.session.mails.map(({ fromAddr, text, headerSubject }, i) => (
-            <Email
-              key={i}
-              text={text}
-              fromAddr={fromAddr}
-              headerSubject={headerSubject}
-              selectEmail={() => selectEmailToRead(i)}
-            />
+            <li key={i}>
+              <Email
+                text={text}
+                fromAddr={fromAddr}
+                headerSubject={headerSubject}
+                selectEmail={() => selectEmailToRead(i)}
+              />
+            </li>
           ))}
         </ul>
       </section>
-      <section className="w-full px-2 bg-gray-200">
+      <section className="w-full px-2 bg-gray-200 overflow-auto">
         {emailToRead ? (
           <>
             <h2 className="p-2 py-3 font-semibold border-b border-gray-300">
-              {emailToRead.fromAddr}
+              De: {emailToRead.fromAddr}
             </h2>
-            <h1 className="px-2 py-3">{emailToRead.headerSubject}</h1>
-            <div className="bg-white p-2 whitespace-pre-line font-semibold">
+            <h1 className="px-2 py-3">Assunto: {emailToRead.headerSubject}</h1>
+            <div className="bg-white h-full overflow-auto p-2 whitespace-pre-line font-semibold">
               {emailToRead.text}
             </div>
           </>
@@ -72,7 +73,7 @@ const Inbox = () => {
               <div className="h-2.5 bg-gray-500 rounded-full animate-pulse w-48 mb-3.5"></div>
             </h2>
             <h1 className="px-2 py-3"></h1>
-            <div className="bg-white p-2 whitespace-pre-line font-semibold">
+            <div className="bg-white h-[88.6%] p-2 whitespace-pre-line font-semibold">
               {emails && emails.session.mails.length < 1
                 ? "Você não tem emails no seu inbox"
                 : "Selecione um email a esquerda para ler"}
