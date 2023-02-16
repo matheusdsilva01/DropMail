@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       content: {
         'copy': 'url("assets/copy-icon.svg")',
+        'refresh': 'url("assets/refresh-icon.svg")',
       },
     },
   },

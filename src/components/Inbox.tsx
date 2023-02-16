@@ -7,17 +7,17 @@ import { sessionType } from "types/session";
 import Email from "./email";
 
 const Inbox = () => {
+  const [emailToRead, setEmailToRead] = useState<mailData>();
   const [session, setSession] = useLocalStorage<sessionType | undefined>(
     "session",
     undefined
   );
-  const [emailToRead, setEmailToRead] = useState<mailData>();
   const id = session?.id;
   const [getEmails, { data: emails, refetch }] = useLazyQuery<Mail>(
     GET_EMAILS,
     {
-      variables: { sessionid: id },
-      pollInterval: 150000
+      variables: { sessionid: id }
+      // pollInterval: session ? 15000 : undefined
     }
   );
 
@@ -27,7 +27,7 @@ const Inbox = () => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await getEmails();
+      const { data } = await refetch();
       if (session && data?.session) {
         setSession(old => {
           if (old) {
@@ -45,14 +45,13 @@ const Inbox = () => {
         <ul>
           <li className="p-2 py-3 font-bold">Inbox</li>
           {emails?.session.mails.map(({ fromAddr, text, headerSubject }, i) => (
-            <li key={i}>
-              <Email
-                text={text}
-                fromAddr={fromAddr}
-                headerSubject={headerSubject}
-                selectEmail={() => selectEmailToRead(i)}
-              />
-            </li>
+            <Email
+              key={i}
+              text={text}
+              fromAddr={fromAddr}
+              headerSubject={headerSubject}
+              selectEmail={() => selectEmailToRead(i)}
+            />
           ))}
         </ul>
       </section>
