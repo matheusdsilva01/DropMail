@@ -10,16 +10,6 @@ function App() {
     cache: new InMemoryCache()
   });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.Notification.requestPermission(permission => {
-        if (permission === "granted") {
-          console.log("Notification accept");
-        }
-      });
-    }
-  }, []);
-
   return (
     <ApolloProvider client={client}>
       <HomeLayout />

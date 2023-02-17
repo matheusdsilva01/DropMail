@@ -2,6 +2,14 @@ import { render } from "@testing-library/react";
 import Header from "components/header";
 
 describe("Tests to header modal", () => {
+  const mockRequestPermission = jest.fn();
+  Object.defineProperty(window, "Notification", {
+    value: {
+      requestPermission: mockRequestPermission,
+      permission: "granted"
+    },
+    writable: true
+  });
   it("should render header", () => {
     const mockUseLocalStorage = jest.fn();
     mockUseLocalStorage.mockImplementation((key: string) => {

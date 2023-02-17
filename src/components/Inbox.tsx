@@ -75,13 +75,6 @@ const Inbox = () => {
                   headerSubject={headerSubject}
                   selectEmail={() => selectEmailToRead(i)}
                 />
-                <Email
-                  key={i}
-                  text={text}
-                  fromAddr={fromAddr}
-                  headerSubject={headerSubject}
-                  selectEmail={() => selectEmailToRead(i)}
-                />
               </>
             ))}
         </ul>
