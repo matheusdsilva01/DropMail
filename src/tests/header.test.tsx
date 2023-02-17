@@ -14,7 +14,7 @@ describe("Tests to header modal", () => {
     jest.mock("hooks/useLocalStorage", () => ({
       useLocalStorage: mockUseLocalStorage
     }));
-    const { getByRole } = render(<Header />);
-    expect(getByRole("heading")).toBeInTheDocument();
+    const { getByAltText } = render(<Header />);
+    expect(getByAltText("logo-website")).toBeInTheDocument();
   });
 });

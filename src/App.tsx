@@ -18,7 +18,6 @@ function App() {
         }
       });
     }
-    return window.removeEventListener("DOMContentLoaded", () => {});
   }, []);
 
   return (
