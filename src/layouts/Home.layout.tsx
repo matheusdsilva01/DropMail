@@ -1,4 +1,4 @@
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { GENERATE_SESSION, GET_EMAILS } from "apollo/querys";
 import Header from "components/header";
 import Inbox from "components/Inbox";
@@ -17,8 +17,8 @@ const HomeLayout = () => {
     undefined
   );
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [getEmails, { loading: loadingQueryGetEmails }] =
-    useLazyQuery<Mail>(GET_EMAILS);
+  const { loading: loadingQueryGetEmails, refetch: getEmails } =
+    useQuery<Mail>(GET_EMAILS);
   const [generateSession, { loading: loadingQueryCreateSession }] =
     useMutation(GENERATE_SESSION);
 
@@ -27,7 +27,7 @@ const HomeLayout = () => {
   };
 
   const refreshEmails = () => {
-    getEmails().then(() => setInterval(15));
+    getEmails({ sessionid: session?.id }).then(() => setInterval(15));
   };
 
   const generateEmail = async () => {
@@ -45,7 +45,9 @@ const HomeLayout = () => {
   const copyEmailToClipboard = () => {
     session && navigator.clipboard.writeText(session.address);
   };
-
+  if (interval === 0) {
+    getEmails({ sessionid: session?.id }).then(() => setInterval(15));
+  }
   useInterval(
     () =>
       setInterval(old => {
@@ -84,7 +86,7 @@ const HomeLayout = () => {
                   className="w-full rounded-l bg-white border border-gray-300 p-2"
                   type="text"
                   disabled
-                  value={session?.address}
+                  defaultValue={session?.address}
                 />
                 <button
                   className="flex border p-2 rounded-r border-gray-300 before:content-copy before:align-middle"

@@ -19,7 +19,13 @@ const Modal = ({ onClick, loading }: ModalProps) => {
             onClick={onClick}
             className="bg-emerald-400 px-5 py-2 rounded-sm m-auto hover:shadow-lg flex items-center"
           >
-            {loading && <img src={CircleSpin} alt="" />}
+            {loading && (
+              <img
+                src={CircleSpin}
+                className="w-5 mr-2 animate-spin"
+                alt="circle-icon"
+              />
+            )}
             Começar
           </button>
         </div>
